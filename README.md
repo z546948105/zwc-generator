@@ -48,11 +48,13 @@ mvn spring-boot:run -Dspring.profiles.active=mysql
 
 ### 使用 Docker 启动
 
+#### 默认使用 MySQL（最简单）
+
 ```bash
 # 进入项目目录
 cd zwc-generator
 
-# 构建并启动（包含 MySQL 数据库）
+# 构建并启动（默认使用 MySQL 数据库）
 docker-compose up -d
 
 # 查看日志
@@ -65,12 +67,52 @@ docker-compose down
 docker-compose down -v
 ```
 
+#### 选择不同数据库
+
+通过环境变量 `DB_TYPE` 选择数据库类型：
+
+```bash
+# 使用 MySQL（默认）
+DB_TYPE=mysql docker-compose --profile mysql up -d
+
+# 使用 PostgreSQL（适用于 GaussDB 开发测试）
+DB_TYPE=postgres DB_URL=jdbc:postgresql://postgres:5432/zwc_generator DB_DRIVER=org.postgresql.Driver docker-compose --profile postgres up -d
+
+# 使用 TiDB
+DB_TYPE=tidb DB_URL=jdbc:mysql://tidb:4000/zwc_generator?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowMultiQueries=true DB_DRIVER=com.mysql.cj.jdbc.Driver docker-compose --profile tidb up -d
+```
+
+#### 使用 .env 文件配置
+
+创建 `.env` 文件：
+
+```env
+DB_TYPE=mysql
+DB_NAME=zwc_generator
+DB_USERNAME=root
+DB_PASSWORD=root
+DB_URL=jdbc:mysql://mysql:3306/zwc_generator?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowMultiQueries=true
+DB_DRIVER=com.mysql.cj.jdbc.Driver
+```
+
+然后启动：
+
+```bash
+docker-compose --profile ${DB_TYPE} up -d
+```
+
 **Docker 环境说明：**
-- MySQL 版本：5.7
-- MySQL 端口：3306
-- 数据库名：zwc_generator
-- 用户名：root
-- 密码：root
+
+| 数据库 | Profile | 默认端口 | 环境变量 |
+|--------|---------|---------|---------|
+| MySQL | mysql | 3306 | `DB_TYPE=mysql` |
+| PostgreSQL | postgres | 5432 | `DB_TYPE=postgres` |
+| TiDB | tidb | 4000 | `DB_TYPE=tidb` |
+
+**注意：**
+- TiDB 单节点模式无需密码，默认用户名 `root`，密码为空
+- PostgreSQL 默认用户名 `zwc`，密码 `root`
+- 首次启动会自动执行 `schema.sql` 和 `data.sql` 初始化脚本
 
 ## 配置说明
 

@@ -4,14 +4,16 @@ services:
   mysql:
     image: mysql:5.7
     container_name: zwc-mysql
+    profiles:
+      - mysql
     ports:
       - "3306:3306"
     environment:
       - TZ=Asia/Shanghai
-      - MYSQL_ROOT_PASSWORD=root
-      - MYSQL_DATABASE=zwc_generator
-      - MYSQL_USER=zwc
-      - MYSQL_PASSWORD=zwc123
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD:-root}
+      - MYSQL_DATABASE=${DB_NAME:-zwc_generator}
+      - MYSQL_USER=${DB_USERNAME:-zwc}
+      - MYSQL_PASSWORD=${DB_PASSWORD:-zwc123}
     volumes:
       - mysql_data:/var/lib/mysql
       - ./src/main/resources/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
@@ -20,6 +22,48 @@ services:
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  postgres:
+    image: postgres:13
+    container_name: zwc-postgres
+    profiles:
+      - postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - TZ=Asia/Shanghai
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-root}
+      - POSTGRES_DB=${DB_NAME:-zwc_generator}
+      - POSTGRES_USER=${DB_USERNAME:-zwc}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./src/main/resources/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
+      - ./src/main/resources/data.sql:/docker-entrypoint-initdb.d/02_data.sql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-zwc}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  tidb:
+    image: pingcap/tidb:v6.5.0
+    container_name: zwc-tidb
+    profiles:
+      - tidb
+    ports:
+      - "4000:4000"
+      - "10080:10080"
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - tidb_data:/tmp/tidb
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-P", "4000", "--protocol=tcp"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -33,16 +77,26 @@ services:
       - "8899:8899"
     environment:
       - TZ=Asia/Shanghai
-      - SPRING_PROFILES_ACTIVE=mysql
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/zwc_generator?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowMultiQueries=true
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_PROFILES_ACTIVE=${DB_TYPE:-mysql}
+      - SPRING_DATASOURCE_URL=${DB_URL:-jdbc:mysql://mysql:3306/${DB_NAME:-zwc_generator}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowMultiQueries=true}
+      - SPRING_DATASOURCE_USERNAME=${DB_USERNAME:-root}
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD:-root}
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=${DB_DRIVER:-com.mysql.cj.jdbc.Driver}
     volumes:
       - ./data:/app/data
     depends_on:
       mysql:
         condition: service_healthy
+        required: false
+      postgres:
+        condition: service_healthy
+        required: false
+      tidb:
+        condition: service_healthy
+        required: false
     restart: unless-stopped
 
 volumes:
   mysql_data:
+  postgres_data:
+  tidb_data:
