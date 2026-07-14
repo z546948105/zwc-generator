@@ -1,15 +1,48 @@
 version: '3.8'
 
 services:
+  mysql:
+    image: mysql:5.7
+    container_name: zwc-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      - TZ=Asia/Shanghai
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=zwc_generator
+      - MYSQL_USER=zwc
+      - MYSQL_PASSWORD=zwc123
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./src/main/resources/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
+      - ./src/main/resources/data.sql:/docker-entrypoint-initdb.d/02_data.sql
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   zwc-generator:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: zwc-generator
     ports:
       - "8899:8899"
     environment:
       - TZ=Asia/Shanghai
-      - SPRING_PROFILES_ACTIVE=h2
+      - SPRING_PROFILES_ACTIVE=mysql
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/zwc_generator?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowMultiQueries=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
     volumes:
       - ./data:/app/data
+    depends_on:
+      mysql:
+        condition: service_healthy
     restart: unless-stopped
+
+volumes:
+  mysql_data:

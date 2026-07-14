@@ -46,6 +46,32 @@ mvn spring-boot:run -Dspring.profiles.active=mysql
 - **前端页面**: http://localhost:8899/index.html
 - **H2 控制台**: http://localhost:8899/h2-console
 
+### 使用 Docker 启动
+
+```bash
+# 进入项目目录
+cd zwc-generator
+
+# 构建并启动（包含 MySQL 数据库）
+docker-compose up -d
+
+# 查看日志
+docker-compose logs -f zwc-generator
+
+# 停止服务
+docker-compose down
+
+# 停止并删除数据卷（谨慎使用）
+docker-compose down -v
+```
+
+**Docker 环境说明：**
+- MySQL 版本：5.7
+- MySQL 端口：3306
+- 数据库名：zwc_generator
+- 用户名：root
+- 密码：root
+
 ## 配置说明
 
 ### 数据库配置
