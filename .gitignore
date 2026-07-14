@@ -13,3 +13,6 @@ target/
 !.mvn/wrapper/maven-wrapper.properties
 !**/src/main/**/target/
 !**/src/test/**/target/
+
+data/
+docker-compose.override.yml

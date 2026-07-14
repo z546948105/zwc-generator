@@ -20,11 +20,12 @@ spring:
     init:
       mode: always
       encoding: UTF-8
-
-freemarker:
-  template-loader-path: classpath:/templates
-  suffix: .ftl
-  charset: UTF-8
+  
+  freemarker:
+    template-loader-path: classpath:/templates
+    suffix: .ftl
+    charset: UTF-8
+    check-template-location: false
 
 logging:
   level:
