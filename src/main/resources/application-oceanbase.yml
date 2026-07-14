@@ -1,0 +1,11 @@
+spring:
+  datasource:
+    url: jdbc:oceanbase://localhost:2883/zwc_generator
+    username: root
+    password: root
+    driver-class-name: com.oceanbase.jdbc.Driver
+  
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL5Dialect

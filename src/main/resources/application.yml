@@ -1,0 +1,32 @@
+server:
+  port: 8899
+
+spring:
+  application:
+    name: zwc-generator
+  
+  profiles:
+    active: h2
+  
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  
+  sql:
+    init:
+      mode: always
+      encoding: UTF-8
+
+freemarker:
+  template-loader-path: classpath:/templates
+  suffix: .ftl
+  charset: UTF-8
+
+logging:
+  level:
+    com.zwc.generator: DEBUG
+    org.hibernate.SQL: DEBUG

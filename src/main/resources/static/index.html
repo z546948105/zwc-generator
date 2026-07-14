@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>代码生成工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 8px;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #059669;
+        }
+        
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+        
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+        
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .btn-group .btn {
+            flex: 1;
+        }
+        
+        .list-group {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        
+        .list-item {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .list-item:last-child {
+            border-bottom: none;
+        }
+        
+        .list-item:hover {
+            background-color: #f8fafc;
+        }
+        
+        .list-item.selected {
+            background-color: #e0e7ff;
+            color: #4338ca;
+        }
+        
+        .list-item input[type="checkbox"] {
+            width: auto;
+            margin-right: 10px;
+        }
+        
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        
+        .table-container {
+            overflow-x: auto;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            background-color: #f8fafc;
+            font-weight: 600;
+            color: #666;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal.show {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 24px;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .modal-header h2 {
+            font-size: 20px;
+            color: #333;
+        }
+        
+        .modal-close {
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .modal-close:hover {
+            color: #666;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: monospace;
+            min-height: 200px;
+            resize: vertical;
+        }
+        
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .preview-content {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 16px;
+            background: #f8fafc;
+            font-family: monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+        
+        .nav-tab {
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            color: #666;
+            transition: all 0.3s;
+        }
+        
+        .nav-tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+        
+        .alert-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+        
+        .alert-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+        
+        .progress-bar {
+            height: 4px;
+            background: #eee;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>代码生成工具</h1>
+            <p>选择数据源和模板，一键生成代码</p>
+        </div>
+
+        <div class="card">
+            <div class="nav-tabs">
+                <div class="nav-tab active" onclick="switchTab('generate')">代码生成</div>
+                <div class="nav-tab" onclick="switchTab('project')">项目管理</div>
+                <div class="nav-tab" onclick="switchTab('datasource')">数据源管理</div>
+                <div class="nav-tab" onclick="switchTab('template')">模板管理</div>
+            </div>
+
+            <div id="generate-tab" class="tab-content active">
+                <div class="form-group">
+                    <label>选择数据源</label>
+                    <select id="datasource-select" onchange="loadTables()">
+                        <option value="">请选择数据源</option>
+                    </select>
+                    <button class="btn btn-sm btn-secondary" onclick="refreshDatasources()" style="margin-top: 8px;">刷新</button>
+                </div>
+
+                <div class="form-group">
+                    <label>选择表（可多选）</label>
+                    <div id="table-list" class="list-group">
+                        <div style="padding: 12px; text-align: center; color: #999;">请先选择数据源</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>选择模板（可多选）</label>
+                    <div id="template-list" class="list-group">
+                        <div style="padding: 12px; text-align: center; color: #999;">加载中...</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>包名</label>
+                    <input type="text" id="package-name" placeholder="例如: com.example.demo" value="com.example.demo">
+                </div>
+
+                <div class="form-group">
+                    <label>作者</label>
+                    <input type="text" id="author" placeholder="输入作者姓名">
+                </div>
+
+                <div class="form-group">
+                    <label>模块名</label>
+                    <input type="text" id="module-name" placeholder="输入模块名称">
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="previewCode()">预览代码</button>
+                    <button class="btn btn-success" onclick="downloadCode()">下载代码</button>
+                </div>
+
+                <div id="preview-section" style="display: none; margin-top: 20px;">
+                    <h3 style="margin-bottom: 10px;">预览结果</h3>
+                    <div id="preview-content" class="preview-content"></div>
+                </div>
+            </div>
+
+            <div id="datasource-tab" class="tab-content">
+                <div class="btn-group" style="margin-bottom: 20px;">
+                    <button class="btn btn-primary" onclick="showDatasourceModal()">添加数据源</button>
+                    <button class="btn btn-secondary" onclick="loadDatasourceList()">刷新列表</button>
+                </div>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>名称</th>
+                                <th>URL</th>
+                                <th>用户名</th>
+                                <th>描述</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="datasource-table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="project-tab" class="tab-content">
+                <div class="btn-group" style="margin-bottom: 20px;">
+                    <button class="btn btn-primary" onclick="showProjectModal()">添加项目</button>
+                    <button class="btn btn-secondary" onclick="loadProjectList()">刷新列表</button>
+                </div>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>名称</th>
+                                <th>包名</th>
+                                <th>描述</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="project-table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="template-tab" class="tab-content">
+                <div class="btn-group" style="margin-bottom: 20px;">
+                    <button class="btn btn-primary" onclick="showTemplateModal()">添加模板</button>
+                    <button class="btn btn-secondary" onclick="loadTemplateList()">刷新列表</button>
+                </div>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>名称</th>
+                                <th>语言</th>
+                                <th>文件路径</th>
+                                <th>描述</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="template-table-body">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="datasource-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="datasource-modal-title">添加数据源</h2>
+                <span class="modal-close" onclick="closeDatasourceModal()">&times;</span>
+            </div>
+            <div>
+                <input type="hidden" id="datasource-id">
+                <div class="form-group">
+                    <label>名称 *</label>
+                    <input type="text" id="ds-name" placeholder="数据源名称">
+                </div>
+                <div class="form-group">
+                    <label>数据库类型</label>
+                    <select id="ds-type" onchange="updateDbType()">
+                        <option value="">请选择数据库类型</option>
+                        <option value="mysql">MySQL</option>
+                        <option value="oracle">Oracle</option>
+                        <option value="oceanbase">OceanBase</option>
+                        <option value="postgresql">PostgreSQL</option>
+                        <option value="sqlserver">SQL Server</option>
+                        <option value="h2">H2</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>数据库URL *</label>
+                    <input type="text" id="ds-url" placeholder="jdbc:mysql://localhost:3306/dbname">
+                </div>
+                <div class="form-group">
+                    <label>用户名 *</label>
+                    <input type="text" id="ds-username" placeholder="用户名">
+                </div>
+                <div class="form-group">
+                    <label>密码 *</label>
+                    <input type="password" id="ds-password" placeholder="密码">
+                </div>
+                <div class="form-group">
+                    <label>驱动类</label>
+                    <input type="text" id="ds-driver" placeholder="com.mysql.cj.jdbc.Driver">
+                </div>
+                <div class="form-group">
+                    <label>描述</label>
+                    <textarea id="ds-description" placeholder="数据源描述"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>所属项目</label>
+                    <select id="ds-project-id">
+                        <option value="">无（全局）</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-secondary" onclick="testDatasourceConnection()">测试连接</button>
+                    <div id="test-result" style="margin-top: 10px;"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeDatasourceModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveDatasource()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="template-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="template-modal-title">添加模板</h2>
+                <span class="modal-close" onclick="closeTemplateModal()">&times;</span>
+            </div>
+            <div>
+                <input type="hidden" id="template-id">
+                <div class="form-group">
+                    <label>名称 *</label>
+                    <input type="text" id="tpl-name" placeholder="模板名称">
+                </div>
+                <div class="form-group">
+                    <label>语言</label>
+                    <input type="text" id="tpl-language" placeholder="java" value="java">
+                </div>
+                <div class="form-group">
+                    <label>文件路径模板 *</label>
+                    <input type="text" id="tpl-path" placeholder="${packagePath}/entity/${classSimpleName}.java">
+                    <div style="font-size: 12px; color: #999; margin-top: 4px;">可用变量: ${packagePath}, ${packageName}, ${className}, ${classSimpleName}, ${tableName}, ${moduleName}</div>
+                </div>
+                <div class="form-group">
+                    <label>所属项目</label>
+                    <select id="tpl-project-id">
+                        <option value="">无（全局）</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>描述</label>
+                    <input type="text" id="tpl-description" placeholder="模板描述">
+                </div>
+                <div class="form-group">
+                    <label>模板内容 *</label>
+                    <textarea id="tpl-content" placeholder="Freemarker模板内容"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeTemplateModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveTemplate()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="project-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="project-modal-title">添加项目</h2>
+                <span class="modal-close" onclick="closeProjectModal()">&times;</span>
+            </div>
+            <div>
+                <input type="hidden" id="project-id">
+                <div class="form-group">
+                    <label>名称 *</label>
+                    <input type="text" id="proj-name" placeholder="项目名称">
+                </div>
+                <div class="form-group">
+                    <label>包名</label>
+                    <input type="text" id="proj-package" placeholder="com.example.demo">
+                </div>
+                <div class="form-group">
+                    <label>描述</label>
+                    <textarea id="proj-description" placeholder="项目描述"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeProjectModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveProject()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="copy-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="copy-modal-title">复制数据源/模板</h2>
+                <span class="modal-close" onclick="closeCopyModal()">&times;</span>
+            </div>
+            <div>
+                <input type="hidden" id="copy-target-project-id">
+                <input type="hidden" id="copy-type">
+                <div class="form-group">
+                    <label>从哪个项目复制</label>
+                    <select id="copy-source-project">
+                        <option value="">请选择源项目</option>
+                    </select>
+                </div>
+                <div id="copy-items-container">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeCopyModal()">取消</button>
+                <button class="btn btn-primary" onclick="confirmCopy()">确认复制</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api';
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            if (tabName === 'datasource') loadDatasourceList();
+            if (tabName === 'template') loadTemplateList();
+            if (tabName === 'project') loadProjectList();
+        }
+
+        async function refreshDatasources() {
+            await loadDatasources();
+        }
+
+        async function loadDatasources() {
+            const select = document.getElementById('datasource-select');
+            select.innerHTML = '<option value="">请选择数据源</option>';
+            
+            try {
+                const response = await fetch(API_BASE + '/datasource/enabled');
+                const data = await response.json();
+                
+                if (data.code === 200) {
+                    data.data.forEach(ds => {
+                        const option = document.createElement('option');
+                        option.value = ds.id;
+                        option.textContent = ds.name;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                showAlert('加载数据源失败: ' + error.message, 'error');
+            }
+        }
+
+        async function loadTables() {
+            const datasourceId = document.getElementById('datasource-select').value;
+            const tableList = document.getElementById('table-list');
+            
+            if (!datasourceId) {
+                tableList.innerHTML = '<div style="padding: 12px; text-align: center; color: #999;">请先选择数据源</div>';
+                return;
+            }
+            
+            tableList.innerHTML = '<div style="padding: 12px; text-align: center; color: #999;">加载中...</div>';
+            
+            try {
+                const response = await fetch(API_BASE + '/datasource/' + datasourceId + '/tables');
+                const data = await response.json();
+                
+                if (data.code === 200) {
+                    tableList.innerHTML = '';
+                    data.data.forEach(table => {
+                        const item = document.createElement('div');
+                        item.className = 'list-item';
+                        item.innerHTML = `
+                            <label class="checkbox-label">
+                                <input type="checkbox" value="${table}" onchange="toggleTableSelect(this)">
+                                ${table}
+                            </label>
+                        `;
+                        tableList.appendChild(item);
+                    });
+                } else {
+                    tableList.innerHTML = '<div style="padding: 12px; text-align: center; color: #ef4444;">' + data.message + '</div>';
+                }
+            } catch (error) {
+                tableList.innerHTML = '<div style="padding: 12px; text-align: center; color: #ef4444;">加载表失败: ' + error.message + '</div>';
+            }
+        }
+
+        function toggleTableSelect(checkbox) {
+            const item = checkbox.closest('.list-item');
+            if (checkbox.checked) {
+                item.classList.add('selected');
+            } else {
+                item.classList.remove('selected');
+            }
+        }
+
+        async function loadTemplateList() {
+            const templateList = document.getElementById('template-list');
+            const tableBody = document.getElementById('template-table-body');
+            
+            try {
+                const response = await fetch(API_BASE + '/template/enabled');
+                const data = await response.json();
+                
+                if (data.code === 200) {
+                    if (templateList) {
+                        templateList.innerHTML = '';
+                        data.data.forEach(tpl => {
+                            const item = document.createElement('div');
+                            item.className = 'list-item';
+                            item.innerHTML = `
+                                <label class="checkbox-label">
+                                    <input type="checkbox" value="${tpl.id}" onchange="toggleTemplateSelect(this)">
+                                    ${tpl.name} <span class="badge badge-success">${tpl.language}</span>
+                                </label>
+                            `;
+                            templateList.appendChild(item);
+                        });
+                    }
+                    
+                    if (tableBody) {
+                        tableBody.innerHTML = '';
+                        data.data.forEach(tpl => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${tpl.name}</td>
+                                <td>${tpl.language}</td>
+                                <td>${tpl.filePathPattern}</td>
+                                <td>${tpl.description || '-'}</td>
+                                <td><span class="badge ${tpl.enabled ? 'badge-success' : 'badge-warning'}">${tpl.enabled ? '启用' : '禁用'}</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary" onclick="editTemplate(${tpl.id})">编辑</button>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteTemplate(${tpl.id})">删除</button>
+                                </td>
+                            `;
+                            tableBody.appendChild(row);
+                        });
+                    }
+                }
+            } catch (error) {
+                showAlert('加载模板失败: ' + error.message, 'error');
+            }
+        }
+
+        function toggleTemplateSelect(checkbox) {
+            const item = checkbox.closest('.list-item');
+            if (checkbox.checked) {
+                item.classList.add('selected');
+            } else {
+                item.classList.remove('selected');
+            }
+        }
+
+        async function previewCode() {
+            const request = buildGenerateRequest();
+            if (!request) return;
+            
+            try {
+                const response = await fetch(API_BASE + '/generate/preview', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(request)
+                });
+                
+                const data = await response.json();
+                
+                if (data.code === 200) {
+                    const previewContent = document.getElementById('preview-content');
+                    let content = '';
+                    for (const [path, code] of Object.entries(data.data)) {
+                        content += '=== ' + path + ' ===\n\n' + code + '\n\n';
+                    }
+                    previewContent.textContent = content;
+                    document.getElementById('preview-section').style.display = 'block';
+                    showAlert('预览成功', 'success');
+                } else {
+                    showAlert(data.message, 'error');
+                }
+            } catch (error) {
+                showAlert('预览失败: ' + error.message, 'error');
+            }
+        }
+
+        async function downloadCode() {
+            const request = buildGenerateRequest();
+            if (!request) return;
+            
+            try {
+                const response = await fetch(API_BASE + '/generate/download', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(request)
+                });
+                
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'code-generate.zip';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                    showAlert('下载成功', 'success');
+                } else {
+                    const data = await response.json();
+                    showAlert(data.message, 'error');
+                }
+            } catch (error) {
+                showAlert('下载失败: ' + error.message, 'error');
+            }
+        }
+
+        function buildGenerateRequest() {
+            const datasourceId = document.getElementById('datasource-select').value;
+            const packageName = document.getElementById('package-name').value;
+            
+            if (!datasourceId) {
+                showAlert('请选择数据源', 'error');
+                return null;
+            }
+            
+            const tableCheckboxes = document.querySelectorAll('#table-list input[type="checkbox"]:checked');
+            const tableNames = Array.from(tableCheckboxes).map(cb => cb.value);
+            
+            if (tableNames.length === 0) {
+                showAlert('请至少选择一个表', 'error');
+                return null;
+            }
+            
+            const templateCheckboxes = document.querySelectorAll('#template-list input[type="checkbox"]:checked');
+            const templateIds = Array.from(templateCheckboxes).map(cb => parseInt(cb.value));
+            
+            if (templateIds.length === 0) {
+                showAlert('请至少选择一个模板', 'error');
+                return null;
+            }
+            
+            if (!packageName) {
+                showAlert('请输入包名', 'error');
+                return null;
+            }
+            
+            return {
+                dataSourceId: datasourceId,
+                tableNames: tableNames,
+                templateIds: templateIds,
+                packageName: packageName,
+                author: document.getElementById('author').value,
+                moduleName: document.getElementById('module-name').value
+            };
+        }
+
+        function showAlert(message, type) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-' + type;
+            alertDiv.textContent = message;
+            
+            const container = document.querySelector('.container');
+            container.insertBefore(alertDiv, container.firstChild);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 3000);
+        }
+
+        async function loadDatasourceList() {
+            const tableBody = document.getElementById('datasource-table-body');
+            
+            try {
+                const response = await fetch(API_BASE + '/datasource');
+                const data = await response.json();
+                
+                if (data.code === 200) {
+                    tableBody.innerHTML = '';
+                    data.data.forEach(ds => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${ds.name}</td>
+                            <td>${ds.url}</td>
+                            <td>${ds.username}</td>
+                            <td>${ds.description || '-'}</td>
+                            <td><span class="badge ${ds.enabled ? 'badge-success' : 'badge-warning'}">${ds.enabled ? '启用' : '禁用'}</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="editDatasource(${ds.id})">编辑</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteDatasource(${ds.id})">删除</button>
+                                <button class="btn btn-sm btn-secondary" onclick="testConnection(${ds.id})">测试连接</button>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                }
+            } catch (error) {
+                showAlert('加载数据源列表失败: ' + error.message, 'error');
+            }
+        }
+
+        function updateDbType() {
+            const type = document.getElementById('ds-type').value;
+            const urlInput = document.getElementById('ds-url');
+            const driverInput = document.getElementById('ds-driver');
+            
+            const dbTypes = {
+                'mysql': { prefix: 'jdbc:mysql://localhost:3306/', driver: 'com.mysql.cj.jdbc.Driver' },
+                'oracle': { prefix: 'jdbc:oracle:thin:@localhost:1521/', driver: 'oracle.jdbc.driver.OracleDriver' },
+                'oceanbase': { prefix: 'jdbc:oceanbase://localhost:2883/', driver: 'com.oceanbase.jdbc.Driver' },
+                'postgresql': { prefix: 'jdbc:postgresql://localhost:5432/', driver: 'org.postgresql.Driver' },
+                'sqlserver': { prefix: 'jdbc:sqlserver://localhost:1433;databaseName=', driver: 'com.microsoft.sqlserver.jdbc.SQLServerDriver' },
+                'h2': { prefix: 'jdbc:h2:mem:', driver: 'org.h2.Driver' }
+            };
+            
+            if (dbTypes[type]) {
+                urlInput.placeholder = dbTypes[type].prefix + 'dbname';
+                driverInput.value = dbTypes[type].driver;
+            } else {
+                urlInput.placeholder = 'jdbc:mysql://localhost:3306/dbname';
+                driverInput.value = '';
+            }
+        }
+
+        function showDatasourceModal() {
+            document.getElementById('datasource-modal-title').textContent = '添加数据源';
+            document.getElementById('datasource-id').value = '';
+            document.getElementById('ds-name').value = '';
+            document.getElementById('ds-type').value = '';
+            document.getElementById('ds-url').value = '';
+            document.getElementById('ds-username').value = '';
+            document.getElementById('ds-password').value = '';
+            document.getElementById('ds-driver').value = '';
+            document.getElementById('ds-description').value = '';
+            document.getElementById('ds-project-id').value = '';
+            document.getElementById('test-result').innerHTML = '';
+            loadProjectsForSelect();
+            document.getElementById('datasource-modal').classList.add('show');
+        }
+
+        function closeDatasourceModal() {
+            document.getElementById('datasource-modal').classList.remove('show');
+        }
+
+        async function editDatasource(id) {
+            try {
+                const response = await fetch(API_BASE + '/datasource/' + id);
+                const data = await response.json();
+                
+                if (data.code === 200) {
+                    const ds = data.data;
+                    document.getElementById('datasource-modal-title').textContent = '编辑数据源';
+                    document.getElementById('datasource-id').value = ds.id;
+                    document.getElementById('ds-name').value = ds.name;
+                    document.getElementById('ds-url').value = ds.url;
+                    document.getElementById('ds-username').value = ds.username;
+                    document.getElementById('ds-password').value = ds.password;
+                    document.getElementById('ds-driver').value = ds.driverClass || '';
+                    document.getElementById('ds-description').value = ds.description || '';
+                    document.getElementById('ds-project-id').value = ds.projectId || '';
+                    document.getElementById('test-result').innerHTML = '';
+                    
+                    const url = ds.url;
+                    let dbType = '';
+                    if (url && url.toLowerCase().startsWith('jdbc:mysql')) {
+                        dbType = 'mysql';
+                    } else if (url && url.toLowerCase().startsWith('jdbc:oracle')) {
+                        dbType = 'oracle';
+                    } else if (url && url.toLowerCase().startsWith('jdbc:oceanbase')) {
+                        dbType = 'oceanbase';
+                    } else if (url && url.toLowerCase().startsWith('jdbc:postgresql')) {
+                        dbType = 'postgresql';
+                    } else if (url && url.toLowerCase().startsWith('jdbc:sqlserver')) {
+                        dbType = 'sqlserver';
+                    } else if (url && url.toLowerCase().startsWith('jdbc:h2')) {
+                        dbType = 'h2';
+                    }
+                    document.getElementById('ds-type').value = dbType;
+                    
+                    document.getElementById('datasource-modal').classList.add('show');
+                }
+            } catch (error) {
+                showAlert('加载数据源失败: ' + error.message, 'error');
+            }
+        }
+
+        async function saveDatasource() {
+            const id = document.getElementById('datasource-id').value;
+            const data = {
+                name: document.getElementById('ds-name').value,
+                url: document.getElementById('ds-url').value,
+                username: document.getElementById('ds-username').value,
+                password: document.getElementById('ds-password').value,
+                driverClass: document.getElementById('ds-driver').value,
+                description: document.getElementById('ds-description').value,
+                projectId: document.getElementById('ds-project-id').value || null,
+                enabled: true
+            };
+            
+            try {
+                const url = id ? API_BASE + '/datasource/' + id : API_BASE + '/datasource';
+                const method = id ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.code === 200) {
+                    showAlert(result.message, 'success');
+                    closeDatasourceModal();
+                    loadDatasourceList();
+                    loadDatasources();
+                } else {
+                    showAlert(result.message, 'error');
+                }
+            } catch (error) {
+                showAlert('保存失败: ' + error.message, 'error');
+            }
+        }
+
+        async function deleteDatasource(id) {
+            if (!confirm('确定要删除这个数据源吗？')) return;
+            
+            try {
+                const response = await fetch(API_BASE + '/datasource/' + id, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (result.code === 200) {
+                    showAlert(result.message, 'success');
+                    loadDatasourceList();
+                    loadDatasources();
+                } else {
+                    showAlert(result.message, 'error');
+                }
+            } catch (error) {
+                showAlert('删除失败: ' + error.message, 'error');
+            }
+        }
+
+        async function testDatasourceConnection() {
+            const id = document.getElementById('datasource-id').value;
+            const url = document.getElementById('ds-url').value;
+            const username = document.getElementById('ds-username').value;
+            const password = document.getElementById('ds-password').value;
+            const driver = document.getElementById('ds-driver').value;
+            
+            const tempDs = {
+                name: 'temp-test',
+                url: url,
+                username: username,
+                password: password,
+                driverClass: driver,
+                description: 'temp',
+                enabled: true
+            };
+            
+            try {
+                let response = await fetch(API_BASE + '/datasource', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(tempDs)
+                });
+                
+                let result = await response.json();
+                
+                if (result.code === 200) {
+                    const tempId = result.data.id;
+                    
+                    try {
+                        response = await fetch(API_BASE + '/datasource/' + tempId + '/test', {
+                            method: 'POST'
+                        });
+                        
+                        result = await response.json();
+                        
+                        if (result.code === 200) {
+                            document.getElementById('test-result').innerHTML = '<div class="alert alert-success">连接测试成功！</div>';
+                        } else {
+                            document.getElementById('test-result').innerHTML = '<div class="alert alert-error">连接测试失败: ' + result.message + '</div>';
+                        }
+                    } finally {
+                        await fetch(API_BASE + '/datasource/' + tempId, {
+                            method: 'DELETE'
+                        });
+                    }
+                } else {
+                    document.getElementById('test-result').innerHTML = '<div class="alert alert-error">创建临时数据源失败: ' + result.message + '</div>';
+                }
+            } catch (error) {
+                document.getElementById('test-result').innerHTML = '<div class="alert alert-error">测试失败: ' + error.message + '</div>';
+            }
+        }
+
+        async function testConnection(id) {
+            try {
+                const response = await fetch(API_BASE + '/datasource/' + id + '/test', {
+                    method: 'POST'
+                });
+                
+                const result = await response.json();
+                
+                if (result.code === 200) {
+                    showAlert('连接测试成功！', 'success');
+                } else {
+                    showAlert('连接测试失败: ' + result.message, 'error');
+                }
+            } catch (error) {
+                showAlert('测试失败: ' + error.message, 'error');
+            }
+        }
+
+        function showTemplateModal() {
+            document.getElementById('template-modal-title').textContent = '添加模板';
+            document.getElementById('template-id').value = '';
+            document.getElementById('tpl-name').value = '';
+            document.getElementById('tpl-language').value = 'java';
+            document.getElementById('tpl-path').value = '';
+            document.getElementById('tpl-project-id').value = '';
+            document.getElementById('tpl-description').value = '';
+            document.getElementById('tpl-content').value = '';
+            loadProjectsForSelect();
+            document.getElementById('template-modal').classList.add('show');
+        }
+
+        function closeTemplateModal() {
+            document.getElementById('template-modal').classList.remove('show');
+        }
+
+        async function editTemplate(id) {
+            try {
+                const response = await fetch(API_BASE + '/template/' + id);
+                const data = await response.json();
+                
+                if (data.code === 200) {
+                    const tpl = data.data;
+                    document.getElementById('template-modal-title').textContent = '编辑模板';
+                    document.getElementById('template-id').value = tpl.id;
+                    document.getElementById('tpl-name').value = tpl.name;
+                    document.getElementById('tpl-language').value = tpl.language || 'java';
+                    document.getElementById('tpl-path').value = tpl.filePathPattern;
+                    document.getElementById('tpl-project-id').value = tpl.projectId || '';
+                    document.getElementById('tpl-description').value = tpl.description || '';
+                    document.getElementById('tpl-content').value = tpl.content;
+                    loadProjectsForSelect();
+                    document.getElementById('template-modal').classList.add('show');
+                }
+            } catch (error) {
+                showAlert('加载模板失败: ' + error.message, 'error');
+            }
+        }
+
+        async function saveTemplate() {
+            const id = document.getElementById('template-id').value;
+            const data = {
+                name: document.getElementById('tpl-name').value,
+                language: document.getElementById('tpl-language').value,
+                filePathPattern: document.getElementById('tpl-path').value,
+                description: document.getElementById('tpl-description').value,
+                projectId: document.getElementById('tpl-project-id').value || null,
+                content: document.getElementById('tpl-content').value,
+                enabled: true
+            };
+            
+            try {
+                const url = id ? API_BASE + '/template/' + id : API_BASE + '/template';
+                const method = id ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.code === 200) {
+                    showAlert(result.message, 'success');
+                    closeTemplateModal();
+                    loadTemplateList();
+                } else {
+                    showAlert(result.message, 'error');
+                }
+            } catch (error) {
+                showAlert('保存失败: ' + error.message, 'error');
+            }
+        }
+
+        async function deleteTemplate(id) {
+            if (!confirm('确定要删除这个模板吗？')) return;
+            
+            try {
+                const response = await fetch(API_BASE + '/template/' + id, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (result.code === 200) {
+                    showAlert(result.message, 'success');
+                    loadTemplateList();
+                } else {
+                    showAlert(result.message, 'error');
+                }
+            } catch (error) {
+                showAlert('删除失败: ' + error.message, 'error');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDatasources();
+            loadTemplateList();
+            loadProjectsForSelect();
+        });
+
+        async function loadProjectsForSelect() {
+            const selects = ['tpl-project-id', 'ds-project-id', 'copy-source-project'];
+            
+            try {
+                const response = await fetch(API_BASE + '/project');
+                const data = await response.json();
+                
+                if (data.code === 200) {
+                    selects.forEach(selectId => {
+                        const select = document.getElementById(selectId);
+                        if (select) {
+                            const currentValue = select.value;
+                            const options = Array.from(select.options).filter(o => o.value === '');
+                            select.innerHTML = '';
+                            options.forEach(o => select.appendChild(o));
+                            
+                            data.data.forEach(proj => {
+                                const option = document.createElement('option');
+                                option.value = proj.id;
+                                option.textContent = proj.name;
+                                select.appendChild(option);
+                            });
+                            
+                            select.value = currentValue;
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('加载项目列表失败:', error);
+            }
+        }
+
+        async function loadProjectList() {
+            const tableBody = document.getElementById('project-table-body');
+            
+            try {
+                const response = await fetch(API_BASE + '/project');
+                const data = await response.json();
+                
+                if (data.code === 200) {
+                    tableBody.innerHTML = '';
+                    data.data.forEach(proj => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${proj.name}</td>
+                            <td>${proj.packageName || '-'}</td>
+                            <td>${proj.description || '-'}</td>
+                            <td><span class="badge ${proj.enabled ? 'badge-success' : 'badge-warning'}">${proj.enabled ? '启用' : '禁用'}</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-primary" onclick="editProject(${proj.id})">编辑</button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteProject(${proj.id})">删除</button>
+                                <button class="btn btn-sm btn-secondary" onclick="showCopyModal(${proj.id}, 'datasource')">复制数据源</button>
+                                <button class="btn btn-sm btn-secondary" onclick="showCopyModal(${proj.id}, 'template')">复制模板</button>
+                                <button class="btn btn-sm btn-success" onclick="copyAllFromProject(${proj.id})">复制全部</button>
+                            </td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                }
+            } catch (error) {
+                showAlert('加载项目列表失败: ' + error.message, 'error');
+            }
+        }
+
+        function showProjectModal() {
+            document.getElementById('project-modal-title').textContent = '添加项目';
+            document.getElementById('project-id').value = '';
+            document.getElementById('proj-name').value = '';
+            document.getElementById('proj-package').value = '';
+            document.getElementById('proj-description').value = '';
+            document.getElementById('project-modal').classList.add('show');
+        }
+
+        function closeProjectModal() {
+            document.getElementById('project-modal').classList.remove('show');
+        }
+
+        async function editProject(id) {
+            try {
+                const response = await fetch(API_BASE + '/project/' + id);
+                const data = await response.json();
+                
+                if (data.code === 200) {
+                    const proj = data.data;
+                    document.getElementById('project-modal-title').textContent = '编辑项目';
+                    document.getElementById('project-id').value = proj.id;
+                    document.getElementById('proj-name').value = proj.name;
+                    document.getElementById('proj-package').value = proj.packageName || '';
+                    document.getElementById('proj-description').value = proj.description || '';
+                    document.getElementById('project-modal').classList.add('show');
+                }
+            } catch (error) {
+                showAlert('加载项目失败: ' + error.message, 'error');
+            }
+        }
+
+        async function saveProject() {
+            const id = document.getElementById('project-id').value;
+            const data = {
+                name: document.getElementById('proj-name').value,
+                packageName: document.getElementById('proj-package').value,
+                description: document.getElementById('proj-description').value,
+                enabled: true
+            };
+            
+            try {
+                const url = id ? API_BASE + '/project/' + id : API_BASE + '/project';
+                const method = id ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.code === 200) {
+                    showAlert(id ? '更新成功' : '创建成功', 'success');
+                    closeProjectModal();
+                    loadProjectList();
+                    loadProjectsForSelect();
+                } else {
+                    showAlert(result.message, 'error');
+                }
+            } catch (error) {
+                showAlert('保存失败: ' + error.message, 'error');
+            }
+        }
+
+        async function deleteProject(id) {
+            if (!confirm('确定要删除这个项目吗？')) return;
+            
+            try {
+                const response = await fetch(API_BASE + '/project/' + id, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (result.code === 200) {
+                    showAlert('删除成功', 'success');
+                    loadProjectList();
+                    loadProjectsForSelect();
+                } else {
+                    showAlert(result.message, 'error');
+                }
+            } catch (error) {
+                showAlert('删除失败: ' + error.message, 'error');
+            }
+        }
+
+        function showCopyModal(targetProjectId, type) {
+            document.getElementById('copy-target-project-id').value = targetProjectId;
+            document.getElementById('copy-type').value = type;
+            document.getElementById('copy-modal-title').textContent = type === 'datasource' ? '复制数据源' : '复制模板';
+            document.getElementById('copy-source-project').value = '';
+            document.getElementById('copy-items-container').innerHTML = '';
+            document.getElementById('copy-modal').classList.add('show');
+            loadProjectsForSelect();
+        }
+
+        function closeCopyModal() {
+            document.getElementById('copy-modal').classList.remove('show');
+        }
+
+        document.getElementById('copy-source-project').addEventListener('change', async function() {
+            const sourceProjectId = this.value;
+            const type = document.getElementById('copy-type').value;
+            const container = document.getElementById('copy-items-container');
+            
+            if (!sourceProjectId) {
+                container.innerHTML = '';
+                return;
+            }
+            
+            try {
+                const response = await fetch(API_BASE + '/' + (type === 'datasource' ? 'datasource' : 'template') + '/project/' + sourceProjectId);
+                const data = await response.json();
+                
+                if (data.code === 200) {
+                    if (data.data.length === 0) {
+                        container.innerHTML = '<div style="padding: 12px; text-align: center; color: #999;">该项目没有' + (type === 'datasource' ? '数据源' : '模板') + '</div>';
+                        return;
+                    }
+                    
+                    container.innerHTML = '<label style="display: block; margin-bottom: 8px;">选择要复制的' + (type === 'datasource' ? '数据源' : '模板') + '（可多选）</label>';
+                    data.data.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'list-item';
+                        div.innerHTML = `
+                            <label class="checkbox-label">
+                                <input type="checkbox" value="${item.id}" class="copy-item-checkbox">
+                                ${item.name}
+                            </label>
+                        `;
+                        container.appendChild(div);
+                    });
+                }
+            } catch (error) {
+                container.innerHTML = '<div style="padding: 12px; text-align: center; color: #ef4444;">加载失败: ' + error.message + '</div>';
+            }
+        });
+
+        async function confirmCopy() {
+            const targetProjectId = document.getElementById('copy-target-project-id').value;
+            const sourceProjectId = document.getElementById('copy-source-project').value;
+            const type = document.getElementById('copy-type').value;
+            
+            if (!sourceProjectId) {
+                showAlert('请选择源项目', 'error');
+                return;
+            }
+            
+            const checkboxes = document.querySelectorAll('.copy-item-checkbox:checked');
+            if (checkboxes.length === 0) {
+                showAlert('请至少选择一个' + (type === 'datasource' ? '数据源' : '模板'), 'error');
+                return;
+            }
+            
+            try {
+                for (const checkbox of checkboxes) {
+                    const itemId = checkbox.value;
+                    const url = API_BASE + '/project/' + targetProjectId + '/copy/' + (type === 'datasource' ? 'datasource' : 'template') + '/' + sourceProjectId + '/' + itemId;
+                    await fetch(url, { method: 'POST' });
+                }
+                
+                showAlert('复制成功', 'success');
+                closeCopyModal();
+                loadProjectList();
+            } catch (error) {
+                showAlert('复制失败: ' + error.message, 'error');
+            }
+        }
+
+        async function copyAllFromProject(targetProjectId) {
+            if (!confirm('确定要复制所有数据源和模板到这个项目吗？')) return;
+            
+            try {
+                const response = await fetch(API_BASE + '/project/' + targetProjectId + '/copy/all/' + targetProjectId, {
+                    method: 'POST'
+                });
+                
+                const result = await response.json();
+                
+                if (result.code === 200) {
+                    showAlert('复制全部成功', 'success');
+                    loadProjectList();
+                } else {
+                    showAlert(result.message, 'error');
+                }
+            } catch (error) {
+                showAlert('复制失败: ' + error.message, 'error');
+            }
+        }
+    </script>
+</body>
+</html>
