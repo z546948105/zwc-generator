@@ -94,7 +94,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/zwc_generator?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
     username: root
-    password: your_password
+    password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
 ```
 
