@@ -92,6 +92,12 @@ public class CodeGenerateService {
                 if (rs.next()) {
                     return rs.getString(1);
                 }
+            } else if (databaseType.contains("dameng")) {
+                ResultSet rs = stmt.executeQuery(
+                    "SELECT COMMENTS FROM ALL_TAB_COMMENTS WHERE TABLE_NAME = '" + tableName.toUpperCase() + "'");
+                if (rs.next()) {
+                    return rs.getString(1);
+                }
             }
         } catch (SQLException e) {
             log.warn("获取表注释失败: {}", tableName, e);
@@ -219,11 +225,17 @@ public class CodeGenerateService {
             } catch (SQLException e) {
                 log.warn("获取Oracle schema失败", e);
             }
-        } else if (databaseType.contains("postgresql")) {
+        } else if (databaseType.contains("postgresql") || databaseType.contains("gaussdb")) {
             try {
                 return connection.getSchema();
             } catch (SQLException e) {
-                log.warn("获取PostgreSQL schema失败", e);
+                log.warn("获取PostgreSQL/GaussDB schema失败", e);
+            }
+        } else if (databaseType.contains("dm dbms") || databaseType.contains("dameng")) {
+            try {
+                return connection.getMetaData().getUserName().toUpperCase();
+            } catch (SQLException e) {
+                log.warn("获取达梦数据库schema失败", e);
             }
         }
         return null;

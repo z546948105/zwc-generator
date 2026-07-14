@@ -33,6 +33,10 @@
             <id>oceanbase-maven</id>
             <url>https://repo.oceanbase.com/maven/maven-central/</url>
         </repository>
+        <repository>
+            <id>dameng-maven</id>
+            <url>https://maven.dameng.com/nexus/repository/maven-public/</url>
+        </repository>
     </repositories>
     
     <dependencies>
@@ -96,6 +100,14 @@
             <scope>runtime</scope>
             <optional>true</optional>
             <version>2.4.18</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.dameng</groupId>
+            <artifactId>DmJdbcDriver18</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+            <version>8.1.2.193</version>
         </dependency>
         
         <dependency>

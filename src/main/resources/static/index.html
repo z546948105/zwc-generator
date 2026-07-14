@@ -540,6 +540,9 @@
                         <option value="postgresql">PostgreSQL</option>
                         <option value="sqlserver">SQL Server</option>
                         <option value="h2">H2</option>
+                        <option value="gaussdb">GaussDB</option>
+                        <option value="tidb">TiDB</option>
+                        <option value="dameng">达梦数据库</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -974,7 +977,10 @@
                 'oceanbase': { prefix: 'jdbc:oceanbase://localhost:2883/', driver: 'com.oceanbase.jdbc.Driver' },
                 'postgresql': { prefix: 'jdbc:postgresql://localhost:5432/', driver: 'org.postgresql.Driver' },
                 'sqlserver': { prefix: 'jdbc:sqlserver://localhost:1433;databaseName=', driver: 'com.microsoft.sqlserver.jdbc.SQLServerDriver' },
-                'h2': { prefix: 'jdbc:h2:mem:', driver: 'org.h2.Driver' }
+                'h2': { prefix: 'jdbc:h2:mem:', driver: 'org.h2.Driver' },
+                'gaussdb': { prefix: 'jdbc:postgresql://localhost:5432/', driver: 'org.postgresql.Driver' },
+                'tidb': { prefix: 'jdbc:mysql://localhost:4000/', driver: 'com.mysql.cj.jdbc.Driver' },
+                'dameng': { prefix: 'jdbc:dm://localhost:5236/', driver: 'dm.jdbc.driver.DmDriver' }
             };
             
             if (dbTypes[type]) {
@@ -1025,19 +1031,32 @@
                     document.getElementById('test-result').innerHTML = '';
                     
                     const url = ds.url;
+                    const driver = ds.driverClass ? ds.driverClass.toLowerCase() : '';
                     let dbType = '';
                     if (url && url.toLowerCase().startsWith('jdbc:mysql')) {
-                        dbType = 'mysql';
+                        if (driver.includes('dm')) {
+                            dbType = 'dameng';
+                        } else if (driver.includes('tidb')) {
+                            dbType = 'tidb';
+                        } else {
+                            dbType = 'mysql';
+                        }
                     } else if (url && url.toLowerCase().startsWith('jdbc:oracle')) {
                         dbType = 'oracle';
                     } else if (url && url.toLowerCase().startsWith('jdbc:oceanbase')) {
                         dbType = 'oceanbase';
                     } else if (url && url.toLowerCase().startsWith('jdbc:postgresql')) {
-                        dbType = 'postgresql';
+                        if (driver.includes('gauss') || driver.includes('opengauss')) {
+                            dbType = 'gaussdb';
+                        } else {
+                            dbType = 'postgresql';
+                        }
                     } else if (url && url.toLowerCase().startsWith('jdbc:sqlserver')) {
                         dbType = 'sqlserver';
                     } else if (url && url.toLowerCase().startsWith('jdbc:h2')) {
                         dbType = 'h2';
+                    } else if (url && url.toLowerCase().startsWith('jdbc:dm')) {
+                        dbType = 'dameng';
                     }
                     document.getElementById('ds-type').value = dbType;
                     

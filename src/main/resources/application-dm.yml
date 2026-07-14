@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    url: jdbc:dm://localhost:5236/zwc_generator
+    username: root
+    password: root
+    driver-class-name: dm.jdbc.driver.DmDriver

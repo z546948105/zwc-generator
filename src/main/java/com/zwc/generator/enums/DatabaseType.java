@@ -12,7 +12,13 @@ public enum DatabaseType {
     
     SQLSERVER("sqlserver", "com.microsoft.sqlserver.jdbc.SQLServerDriver", "jdbc:sqlserver://", "SELECT 1", "information_schema.tables", "TABLE_NAME", "TABLE_COMMENT"),
     
-    H2("h2", "org.h2.Driver", "jdbc:h2:", "SELECT 1", "information_schema.tables", "TABLE_NAME", "REMARKS");
+    H2("h2", "org.h2.Driver", "jdbc:h2:", "SELECT 1", "information_schema.tables", "TABLE_NAME", "REMARKS"),
+    
+    GAUSSDB("gaussdb", "org.postgresql.Driver", "jdbc:postgresql://", "SELECT 1", "information_schema.tables", "TABLE_NAME", "TABLE_COMMENT"),
+    
+    TIDB("tidb", "com.mysql.cj.jdbc.Driver", "jdbc:mysql://", "SELECT 1", "information_schema", "TABLE_NAME", "TABLE_COMMENT"),
+    
+    DAMENG("dameng", "dm.jdbc.driver.DmDriver", "jdbc:dm://", "SELECT 1", "DBA_TABLES", "TABLE_NAME", "COMMENTS");
     
     private final String name;
     private final String driverClass;

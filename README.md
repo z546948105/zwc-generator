@@ -6,7 +6,7 @@
 
 - **框架**: Spring Boot 2.7.18
 - **JDK**: 1.8
-- **数据库**: H2 (默认), MySQL, Oracle, OceanBase
+- **数据库**: H2 (默认), MySQL, Oracle, OceanBase, GaussDB, TiDB, 达梦数据库
 - **连接池**: Druid 1.2.20
 - **模板引擎**: FreeMarker 2.3.32
 - **ORM**: Spring Data JPA
@@ -14,7 +14,7 @@
 
 ## 功能特性
 
-- ✅ 多数据源管理（支持 MySQL、Oracle、OceanBase）
+- ✅ 多数据源管理（支持 MySQL、Oracle、OceanBase、GaussDB、TiDB、达梦数据库）
 - ✅ 代码模板管理（Entity、Mapper、Service、ServiceImpl、Controller）
 - ✅ 项目管理（可创建项目，复制数据源和模板）
 - ✅ 代码生成与下载
@@ -84,6 +84,9 @@ docker-compose down -v
 | mysql | application-mysql.yml | MySQL 数据库 |
 | oracle | application-oracle.yml | Oracle 数据库 |
 | oceanbase | application-oceanbase.yml | OceanBase 数据库 |
+| gaussdb | application-gaussdb.yml | GaussDB 数据库 |
+| tidb | application-tidb.yml | TiDB 数据库 |
+| dm | application-dm.yml | 达梦数据库 |
 
 ### MySQL 配置示例
 
@@ -97,6 +100,53 @@ spring:
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
 ```
+
+### GaussDB 配置示例
+
+修改 `application-gaussdb.yml`:
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/zwc_generator
+    username: root
+    password: root
+    driver-class-name: org.postgresql.Driver
+```
+
+**URL 格式**: `jdbc:postgresql://host:port/database`
+
+### TiDB 配置示例
+
+修改 `application-tidb.yml`:
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:4000/zwc_generator?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+```
+
+**URL 格式**: `jdbc:mysql://host:4000/database?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai`
+
+> **注意**: TiDB 兼容 MySQL 协议，使用 MySQL JDBC 驱动即可。
+
+### 达梦数据库配置示例
+
+修改 `application-dm.yml`:
+
+```yaml
+spring:
+  datasource:
+    url: jdbc:dm://localhost:5236/zwc_generator
+    username: root
+    password: root
+    driver-class-name: dm.jdbc.driver.DmDriver
+```
+
+**URL 格式**: `jdbc:dm://host:5236/database`
 
 ### 表结构
 
@@ -122,7 +172,7 @@ spring:
 在"数据源管理"标签页中：
 
 - **添加数据源**: 点击"添加数据源"按钮
-- **选择数据库类型**: 支持 MySQL、Oracle、OceanBase 等
+- **选择数据库类型**: 支持 MySQL、Oracle、OceanBase、GaussDB、TiDB、达梦数据库
 - **测试连接**: 点击"测试连接"验证数据源配置
 - **关联项目**: 可选择所属项目（或设为全局）
 
@@ -203,6 +253,9 @@ zwc-generator/
 │   ├── application-mysql.yml   # MySQL 配置
 │   ├── application-oracle.yml  # Oracle 配置
 │   ├── application-oceanbase.yml # OceanBase 配置
+│   ├── application-gaussdb.yml   # GaussDB 配置
+│   ├── application-tidb.yml      # TiDB 配置
+│   ├── application-dm.yml        # 达梦数据库配置
 │   ├── schema.sql              # 建表语句
 │   ├── data.sql                # 初始化数据
 │   └── static/index.html       # 前端页面

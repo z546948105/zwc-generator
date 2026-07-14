@@ -187,10 +187,12 @@ public class DataSourceService {
     private String[] getTableTypes(String databaseType) {
         if (databaseType.contains("oracle")) {
             return new String[]{"TABLE"};
-        } else if (databaseType.contains("postgresql")) {
+        } else if (databaseType.contains("postgresql") || databaseType.contains("gaussdb")) {
             return new String[]{"TABLE"};
         } else if (databaseType.contains("sqlserver")) {
             return new String[]{"BASE TABLE"};
+        } else if (databaseType.contains("dm dbms") || databaseType.contains("dameng")) {
+            return new String[]{"TABLE"};
         }
         return new String[]{"TABLE"};
     }
@@ -202,11 +204,17 @@ public class DataSourceService {
             } catch (SQLException e) {
                 log.warn("获取Oracle schema失败", e);
             }
-        } else if (databaseType.contains("postgresql")) {
+        } else if (databaseType.contains("postgresql") || databaseType.contains("gaussdb")) {
             try {
                 return connection.getSchema();
             } catch (SQLException e) {
-                log.warn("获取PostgreSQL schema失败", e);
+                log.warn("获取PostgreSQL/GaussDB schema失败", e);
+            }
+        } else if (databaseType.contains("dm dbms") || databaseType.contains("dameng")) {
+            try {
+                return connection.getMetaData().getUserName().toUpperCase();
+            } catch (SQLException e) {
+                log.warn("获取达梦数据库schema失败", e);
             }
         }
         return null;
